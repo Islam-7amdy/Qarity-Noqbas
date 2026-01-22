@@ -11,7 +11,23 @@
   <div id="product-list"></div>
   <button onclick="goToCart()">Go to Cart 🛒</button>
 </div>
+
 <script src="qrcode.min.js"></script>
 <script src="script.js"></script>
+
+<script>
+// قراءة الخدمة المختارة من LocalStorage
+let currentService = localStorage.getItem('currentService');
+if(currentService) {
+  document.getElementById('service-title').innerText = currentService + ' Products';
+  const list = document.getElementById('product-list');
+  productsDB[currentService].forEach((p) => {
+    const div = document.createElement('div');
+    div.innerHTML = `${p.name} - ${p.price} EGP <button onclick="addToCart('${p.name}', ${p.price})">Add</button>`;
+    list.appendChild(div);
+  });
+}
+</script>
+
 </body>
 </html>

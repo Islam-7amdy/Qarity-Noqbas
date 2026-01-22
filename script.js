@@ -30,9 +30,10 @@ function verifyOTP() {
 
 // Services
 function openProducts(service) {
-  currentService = service;
-  window.location.href = 'products.html';
+  localStorage.setItem('currentService', service); // حفظ الخدمة اللي اختارها
+  window.location.href = 'products.html';          // انتقال لصفحة المنتجات
 }
+
 
 // Products Page
 function addToCart(name, price) {
@@ -44,6 +45,7 @@ function addToCart(name, price) {
 function goToCart() {
   window.location.href = 'cart.html';
 }
+
 
 function updateCart() {
   const list = document.getElementById('cart-list');
@@ -70,11 +72,12 @@ function goToTracking() {
   window.location.href = 'tracking.html';
 }
 
+
 // Payment
 function goToPayment() {
   window.location.href = 'payment.html';
-  generateQRCode();
 }
+
 
 function generateQRCode() {
   const qrDiv = document.getElementById('qr-code');
