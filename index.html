@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Qaryati - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Qaryati</h1>
+    <h2>Login or Sign Up</h2>
+
+    <input type="text" id="name" placeholder="Name (optional)">
+    <input type="tel" id="phone" placeholder="Phone Number">
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Confirm OTP</button>
+
+    <p>Already have an account? <a href="#">Login</a></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
