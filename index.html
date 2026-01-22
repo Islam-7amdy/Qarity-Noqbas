@@ -1,122 +1,21 @@
-/* script.js - Advanced Version with LocalStorage & QR Code */
-
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let currentService = '';
-
-const productsDB = {
-  'Supermarket': [
-    {name: 'Rice', price: 30},
-    {name: 'Milk', price: 15},
-    {name: 'Bread', price: 10}
-  ],
-  'Pharmacy': [
-    {name: 'Paracetamol', price: 20},
-    {name: 'Vitamin C', price: 25}
-  ],
-  'Fruits & Vegetables': [
-    {name: 'Apple', price: 5},
-    {name: 'Tomato', price: 3}
-  ],
-  'Restaurants': [
-    {name: 'Burger', price: 50},
-    {name: 'Pizza', price: 80}
-  ]
-};
-
-// Login / Signup using LocalStorage
-function sendOTP() {
-  const phone = document.getElementById('phone').value;
-  const name = document.getElementById('name').value;
-  if(phone === '') { alert('Enter phone number'); return; }
-  localStorage.setItem('userPhone', phone);
-  if(name !== '') { localStorage.setItem('userName', name); }
-  alert('OTP sent to ' + phone + ' (Use 1234 for demo)');
-}
-
-function verifyOTP() {
-  const otp = document.getElementById('otp').value;
-  if(otp === '1234') {
-    alert('OTP verified! Redirecting to services...');
-    window.location.href = 'services.html';
-  } else { alert('Invalid OTP'); }
-}
-
-// Services Page
-function openProducts(service) {
-  currentService = service;
-  document.getElementById('services-page').style.display = 'none';
-  document.getElementById('products-page').style.display = 'block';
-  document.getElementById('service-title').innerText = service + ' Products';
-
-  const list = document.getElementById('product-list');
-  list.innerHTML = '';
-  productsDB[service].forEach((p, i) => {
-    const div = document.createElement('div');
-    div.innerHTML = `${p.name} - ${p.price} EGP <button onclick="addToCart('${p.name}', ${p.price})">Add</button>`;
-    list.appendChild(div);
-  });
-}
-
-// Cart Management
-function addToCart(name, price) {
-  cart.push({name, price});
-  localStorage.setItem('cart', JSON.stringify(cart));
-  alert(name + ' added to cart');
-}
-
-function goToCart() {
-  document.getElementById('products-page').style.display = 'none';
-  document.getElementById('cart-page').style.display = 'block';
-  updateCart();
-}
-
-function updateCart() {
-  const list = document.getElementById('cart-list');
-  list.innerHTML = '';
-  let total = 0;
-  cart.forEach((item, i) => {
-    total += item.price;
-    const div = document.createElement('div');
-    div.innerHTML = `${item.name} - ${item.price} EGP <button onclick="removeFromCart(${i})">Remove</button>`;
-    list.appendChild(div);
-  });
-  document.getElementById('cart-total').innerText = total;
-  document.getElementById('payment-total').innerText = total;
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCart();
-}
-
-// Tracking Page
-function goToTracking() {
-  document.getElementById('cart-page').style.display = 'none';
-  document.getElementById('tracking-page').style.display = 'block';
-  document.getElementById('order-status').innerText = 'Preparing';
-}
-
-// Payment Page with QR Code generation
-function goToPayment() {
-  document.getElementById('tracking-page').style.display = 'none';
-  document.getElementById('payment-page').style.display = 'block';
-  generateQRCode();
-}
-
-function generateQRCode() {
-  const qrDiv = document.getElementById('qr-code');
-  qrDiv.innerHTML = '';
-  const qr = new QRCode(qrDiv, {
-    text: JSON.stringify({cart: cart, total: cart.reduce((a,b)=>a+b.price,0)}),
-    width: 200,
-    height: 200
-  });
-}
-
-function completePayment() {
-  alert('Payment completed! Thank you for your order.');
-  cart = [];
-  localStorage.removeItem('cart');
-  location.href = 'services.html';
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Qaryati - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>Qaryati</h1>
+  <h2>Login / Sign Up</h2>
+  <input type="text" id="name" placeholder="Name (optional)">
+  <input type="tel" id="phone" placeholder="Phone Number">
+  <button onclick="sendOTP()">Send OTP</button>
+  <input type="text" id="otp" placeholder="Enter OTP">
+  <button onclick="verifyOTP()">Confirm OTP</button>
+</div>
+<script src="qrcode.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
