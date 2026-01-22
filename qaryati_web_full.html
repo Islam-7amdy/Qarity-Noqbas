@@ -1,6 +1,6 @@
-/* script.js */
+/* script.js - Advanced Version with LocalStorage & QR Code */
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentService = '';
 
 const productsDB = {
@@ -23,6 +23,25 @@ const productsDB = {
   ]
 };
 
+// Login / Signup using LocalStorage
+function sendOTP() {
+  const phone = document.getElementById('phone').value;
+  const name = document.getElementById('name').value;
+  if(phone === '') { alert('Enter phone number'); return; }
+  localStorage.setItem('userPhone', phone);
+  if(name !== '') { localStorage.setItem('userName', name); }
+  alert('OTP sent to ' + phone + ' (Use 1234 for demo)');
+}
+
+function verifyOTP() {
+  const otp = document.getElementById('otp').value;
+  if(otp === '1234') {
+    alert('OTP verified! Redirecting to services...');
+    window.location.href = 'services.html';
+  } else { alert('Invalid OTP'); }
+}
+
+// Services Page
 function openProducts(service) {
   currentService = service;
   document.getElementById('services-page').style.display = 'none';
@@ -38,8 +57,10 @@ function openProducts(service) {
   });
 }
 
+// Cart Management
 function addToCart(name, price) {
   cart.push({name, price});
+  localStorage.setItem('cart', JSON.stringify(cart));
   alert(name + ' added to cart');
 }
 
@@ -65,20 +86,37 @@ function updateCart() {
 
 function removeFromCart(index) {
   cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
   updateCart();
 }
 
+// Tracking Page
 function goToTracking() {
   document.getElementById('cart-page').style.display = 'none';
   document.getElementById('tracking-page').style.display = 'block';
+  document.getElementById('order-status').innerText = 'Preparing';
 }
 
+// Payment Page with QR Code generation
 function goToPayment() {
   document.getElementById('tracking-page').style.display = 'none';
   document.getElementById('payment-page').style.display = 'block';
+  generateQRCode();
+}
+
+function generateQRCode() {
+  const qrDiv = document.getElementById('qr-code');
+  qrDiv.innerHTML = '';
+  const qr = new QRCode(qrDiv, {
+    text: JSON.stringify({cart: cart, total: cart.reduce((a,b)=>a+b.price,0)}),
+    width: 200,
+    height: 200
+  });
 }
 
 function completePayment() {
   alert('Payment completed! Thank you for your order.');
-  location.reload();
+  cart = [];
+  localStorage.removeItem('cart');
+  location.href = 'services.html';
 }
